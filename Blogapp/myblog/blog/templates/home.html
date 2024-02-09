@@ -1,0 +1,171 @@
+<!-- myblog/myblog/templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Include Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    <style>
+        /* Common styles for both light and dark modes */
+        body {
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition for dark mode */
+            color: #2d3748;
+        }
+
+        /* Dark mode styles */
+        body.dark {
+            background-color: #1a202c;
+            color: #fff;
+        }
+
+        header {
+            background-color: #2d3748;
+        }
+
+        header a {
+            color: #cbd5e0;
+        }
+
+        header a:hover {
+            color: #ffffff;
+        }
+
+        h1 {
+            color: #2d3748;
+        }
+
+        .blog-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .blog-title {
+            color: #1a202c;
+        }
+
+        .author {
+            color: #4a5568;
+        }
+
+        .category {
+            color: #4a5568;
+        }
+
+        .published-date {
+            color: #4a5568;
+        }
+
+        .blog-content {
+            color: #4a5568;
+        }
+
+        .read-more {
+            color: #4299e1;
+        }
+
+        .edit-blog {
+            color: #38a169;
+        }
+
+        .delete-blog {
+            color: #e53e3e;
+        }
+
+        .toggle-button {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .toggle-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body class="font-sans">
+
+    <header class="bg-gray-800 text-white py-4">
+        <div class="container mx-auto flex items-center justify-between">
+            <h1 class="text-2xl font-bold">My Blog</h1>
+            <nav>
+                <a href="/">Home</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'publish_blog' %}" class="mr-4 hover:text-gray-300">Publish Blog</a>
+                   
+                    <a href="{% url 'logout' %}" class="hover:text-gray-300">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="mr-4 hover:text-gray-300">Login</a>
+                    <a href="{% url 'signup' %}" class="hover:text-gray-300 mr-4">Sign up</a>
+                    
+                {% endif %}
+                <button id="darkModeToggle" class="toggle-button">Darkify</button>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 mt-8">
+        <h1 class="text-3xl font-bold mb-4">Welcome to My Blog</h1>
+
+        <div class="flex mb-8">
+            {% if user.is_authenticated %}
+                <p class="mr-4">Hello, <span class="font-bold">{{ user.username }}</span>!</p>
+            {% else %}
+                <p><a href="{% url 'login' %}" class="text-blue-500">Login</a> | <a href="{% url 'signup' %}" class="text-green-500">Sign up</a></p>
+            {% endif %}
+            <a href="{% url 'publish_blog' %}" class="ml-auto px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Publish a Blog</a>
+        </div>
+
+        <ul>
+            {% for blog in blogs %}
+                <li class="mb-8 blog-card">
+                    <strong class="text-2xl blog-title">{{ blog.title }}</strong><br>
+                    <em class="text-gray-600 author">Author: {{ blog.author.username }}</em><br>
+                    {% if blog.category %}
+                        <em class="text-gray-600 category">Category: {{ blog.category.name }}</em><br>
+                    {% endif %}
+                    <em class="text-gray-600 published-date">Published on: {{ blog.created_at }}</em><br>
+                    <p class="mt-4 text-gray-800 blog-content">{{ blog.content|truncatewords:30 }}</p>
+                    <a href="{% url 'read_more' blog.id %}" class="text-blue-500 read-more">Read More</a>
+                    {% if user.is_authenticated and user == blog.author %}
+                        <a href="{% url 'edit_blog' blog.id %}" class="mx-2 text-green-500 edit-blog">Edit</a>
+                        <a href="{% url 'delete_blog' blog.id %}" class="text-red-500 delete-blog">Delete</a>
+                    {% endif %}
+                </li>
+                <hr class="border-t border-gray-300 my-8">
+            {% endfor %}
+        </ul>
+    </div>
+
+    <script>
+        // Check user's dark mode preference from localStorage
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+        // Apply dark mode if user has set it
+        if (isDarkMode) {
+            document.body.classList.add('dark');
+        }
+
+        // Toggle dark mode when button is clicked
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+            // Store user's dark mode preference in localStorage
+            localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+        });
+    </script>
+
+</body>
+</html>

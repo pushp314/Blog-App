@@ -1,0 +1,63 @@
+<!-- myblog/myblog/templates/blog.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ blog.title }}</title>
+    <!-- Include Tailwind CSS CDN for styling (optional) -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        em {
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        p {
+            color: #4caf50;
+            margin-top: 20px;
+        }
+
+        a {
+            color: #4caf50;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Optional: Add responsive styles for smaller screens */
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ blog.title }}</h2>
+    <em>Author: {{ blog.author.username }}</em><br>
+    {% if blog.category %}
+        <em>Category: {{ blog.category.name }}</em><br>
+    {% endif %}
+    <em>Published on: {{ blog.created_at }}</em><br>
+    {{ blog.content|safe }}  {# Displaying full content using the safe filter #}
+    <p><a href="{% url 'home' %}">Back to Home</a></p>
+
+</body>
+</html>
